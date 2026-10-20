@@ -3,315 +3,143 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, nofollow">
-  <title>Area Redazione - Giornalino Universitario</title>
+  <title>Ermes UMG - Creatore Giornalino PDF</title>
   
-  <!-- Grafica e Stili -->
+  <!-- Stili e Grafica -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Editor di testo Quill -->
-  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
-
-  <!-- LIBRERIE PER CREARE IL GIORNALINO PDF -->
+  <!-- Librerie per convertire l'impaginato in PDF -->
   <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
-<body class="bg-slate-100 font-sans min-h-screen text-slate-800">
+<body class="bg-slate-100 font-sans min-h-screen text-slate-800 p-4 md:p-8">
 
-  <!-- SEZIONE LOGIN -->
-  <div id="loginSection" class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-slate-200">
-      <div class="text-center mb-6">
-        <h1 class="text-2xl font-bold text-slate-900">Area Autori</h1>
-        <p class="text-sm text-slate-500 mt-1">Accedi per gestire il giornalino</p>
+  <div class="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-md border border-slate-200">
+    <div class="flex items-center justify-between border-b pb-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">📰 Ermes UMG - Piattaforma Giornalino PDF</h1>
+        <p class="text-xs text-slate-500 mt-1">Carica gli articoli e impagina automaticamente l'edizione in formato PDF</p>
+      </div>
+      <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">Stile Corriere</span>
+    </div>
+
+    <!-- MODULO DATI DELLA TESTATA -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
+      <div>
+        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Titolo / Edizione</label>
+        <input type="text" id="pdfEdition" value="ERMES UMG - Anno XI N. 4" class="w-full px-3 py-2 border rounded text-sm">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Data di Uscita</label>
+        <input type="text" id="pdfDate" value="Martedì, 20 Ottobre 2026" class="w-full px-3 py-2 border rounded text-sm">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Motto / Slogan</label>
+        <input type="text" id="pdfSlogan" value="Il Giornale dell'Università Magna Græcia" class="w-full px-3 py-2 border rounded text-sm">
+      </div>
+    </div>
+
+    <!-- MODULO INSERIMENTO ARTICOLO -->
+    <div class="border p-4 rounded-lg mb-6 bg-white shadow-sm space-y-4">
+      <h3 class="font-bold text-sm text-slate-700">Aggiungi Articolo all'Impaginato</h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs text-slate-500 mb-1">Posizione nel Giornale</label>
+          <select id="artPos" class="w-full px-3 py-2 border rounded text-sm">
+            <option value="main">Apertura (Prima Pagina - Notizia Principale)</option>
+            <option value="side">Spalla / Taglio Medio (Prima Pagina)</option>
+            <option value="inside">Pagine Interne (Layout a 3 colonne)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-500 mb-1">Categoria / Sezione</label>
+          <input type="text" id="artCat" placeholder="Es: Attualità, Diritto, Cultura..." class="w-full px-3 py-2 border rounded text-sm">
+        </div>
       </div>
 
-      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+      <div>
+        <label class="block text-xs text-slate-500 mb-1">Titolo dell'Articolo</label>
+        <input type="text" id="artTitle" placeholder="Inserisci il titolo..." class="w-full px-3 py-2 border rounded text-sm font-semibold">
+      </div>
+
+      <div>
+        <label class="block text-xs text-slate-500 mb-1">Sottotitolo / Catenaccio</label>
+        <input type="text" id="artSubtitle" placeholder="Sommario breve..." class="w-full px-3 py-2 border rounded text-sm">
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Username / Email</label>
-          <input type="text" id="usernameInput" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+          <label class="block text-xs text-slate-500 mb-1">Autore</label>
+          <input type="text" id="artAuthor" placeholder="Nome dell'autore" class="w-full px-3 py-2 border rounded text-sm">
         </div>
         <div>
-          <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
-          <input type="password" id="passwordInput" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+          <label class="block text-xs text-slate-500 mb-1">Foto / Immagine (Opzionale)</label>
+          <input type="file" id="artImage" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700">
         </div>
-        <div id="loginError" class="text-red-500 text-xs hidden">Credenziali non valide. Riprova.</div>
-        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm shadow-md">
-          Accedi
-        </button>
-      </form>
+      </div>
+
+      <div>
+        <label class="block text-xs text-slate-500 mb-1">Testo dell'Articolo</label>
+        <textarea id="artBody" rows="4" placeholder="Incolla o scrivi il testo qui..." class="w-full px-3 py-2 border rounded text-sm"></textarea>
+      </div>
+
+      <button onclick="addArticleToNewspaper()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded text-sm">
+        + Aggiungi Articolo all'Edizione
+      </button>
+    </div>
+
+    <!-- BARRA D'AZIONE PER STAMPA -->
+    <div class="flex justify-between items-center mb-4 border-t pt-4">
+      <h3 class="font-bold text-slate-800">Anteprima Foglio Stampabile</h3>
+      <button onclick="downloadPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-lg shadow-md text-sm">
+        📄 Scarica PDF Stampabile
+      </button>
+    </div>
+
+    <!-- ANTEPRIMA VISIVA GIORNALE (STYLE CORRIERE - GEORGIA) -->
+    <div id="newspaperPaper" class="bg-white p-8 border border-slate-300 shadow-xl mx-auto text-black" style="font-family: Georgia, serif; max-width: 800px; min-height: 1100px;">
+      
+      <!-- TESTATA -->
+      <header class="border-b-4 border-black pb-2 mb-4">
+        <div class="flex justify-between items-center text-xs border-b border-black pb-1 mb-2 font-sans uppercase tracking-wider">
+          <span id="displayDate">MARTEDÌ, 20 OTTOBRE 2026</span>
+          <span id="displaySlogan">ERMES UMG • GIORNALE UNIVERSITARIO</span>
+          <span id="displayEdition">EDIZIONE N. 4</span>
+        </div>
+        <div class="text-center py-2">
+          <h1 class="text-5xl font-black tracking-tight uppercase" style="font-family: 'Times New Roman', Georgia, serif; font-size: 58px; letter-spacing: -1px;">
+            ERMES UMG
+          </h1>
+        </div>
+        <div class="border-t border-black pt-1 mt-1 text-center text-xs italic">
+          Giornale Indipendente dell'Università degli Studi Magna Græcia di Catanzaro
+        </div>
+      </header>
+
+      <!-- PRIMA PAGINA -->
+      <div id="frontPageLayout" class="grid grid-cols-3 gap-6 border-b-2 border-black pb-6 mb-6">
+        <div id="mainArticleSection" class="col-span-2 border-r border-slate-300 pr-6">
+          <div class="text-slate-400 italic text-sm">Aggiungi un articolo scegliendo "Apertura" per visualizzare qui la notizia principale...</div>
+        </div>
+        <div id="sideArticlesSection" class="space-y-4">
+          <div class="text-slate-400 italic text-sm">Notizie di spalla e approfondimenti...</div>
+        </div>
+      </div>
+
+      <!-- PAGINE INTERNE -->
+      <div id="insideArticlesSection" class="space-y-6">
+        <h2 class="text-lg font-bold border-b border-black uppercase tracking-wider mb-2 font-sans">Pagine Interne</h2>
+        <div id="insideGrid" class="grid grid-cols-3 gap-4 text-justify text-xs leading-relaxed">
+          <!-- Articoli interni a 3 colonne -->
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- PANNELLO PRINCIPALE DASHBOARD -->
-  <div id="dashboardContainer" class="hidden">
-    
-    <!-- BARRA IN ALTO (NAVBAR) -->
-    <nav class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shadow-sm">
-      <div class="flex items-center gap-3">
-        <span class="bg-blue-600 text-white p-2 rounded-lg font-bold text-xs">UMG</span>
-        <h2 class="font-bold text-slate-800 text-lg">Pannello Redazione</h2>
-      </div>
-      <div class="flex items-center gap-4">
-        <span id="userBadge" class="text-xs font-semibold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full border">
-          Utente: <span id="loggedUser">Autore</span>
-        </span>
-        <button onclick="handleLogout()" class="text-xs text-red-600 hover:text-red-800 font-medium">
-          Esci
-        </button>
-      </div>
-    </nav>
-
-    <!-- BARRA PER CAMBIARE SCHEDA -->
-    <div class="bg-white border-b border-slate-200 px-6 flex gap-4 text-sm font-semibold text-slate-600">
-      <button onclick="switchTab('editor')" id="tab-editor" class="py-3 border-b-2 border-blue-600 text-blue-600">
-        ✍️ Scrittura Articoli
-      </button>
-      <button onclick="switchTab('pdf')" id="tab-pdf" class="py-3 border-b-2 border-transparent hover:text-slate-800">
-        📰 Crea Giornalino PDF
-      </button>
-    </div>
-
-    <!-- SCHEDA 1: EDITOR ARTICOLI -->
-    <div id="editorSection">
-      <main class="max-w-4xl mx-auto my-8 p-6 bg-white rounded-xl shadow-md border border-slate-200">
-        <h2 class="text-xl font-bold mb-4 text-slate-800">Crea un nuovo articolo</h2>
-
-        <div class="mb-5">
-          <label for="postTitle" class="block text-sm font-medium text-slate-700 mb-2">Titolo dell'articolo</label>
-          <input type="text" id="postTitle" placeholder="Inserisci il titolo..." class="w-full px-4 py-3 border border-slate-300 rounded-lg font-medium text-slate-800 text-base">
-        </div>
-
-        <div class="mb-6">
-          <label class="block text-sm font-medium text-slate-700 mb-2">Contenuto dell'articolo</label>
-          <div id="editorContainer" class="h-80 bg-white rounded-b-lg"></div>
-        </div>
-
-        <div class="flex items-center justify-between border-t pt-4">
-          <div id="statusMessage" class="text-sm font-medium"></div>
-          <button onclick="saveDraft()" id="saveBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg font-medium text-sm shadow-md">
-            <span>Invia in Bozza su Blogger</span>
-          </button>
-        </div>
-      </main>
-    </div>
-
-    <!-- SCHEDA 2: CREATORE GIORNALINO PDF -->
-    <div id="pdfSection" class="hidden max-w-6xl mx-auto my-8 p-6 bg-white rounded-xl shadow-md border border-slate-200">
-      <h2 class="text-xl font-bold mb-4 text-slate-800">Generatore Giornalino PDF (Stile Corriere della Sera)</h2>
-
-      <!-- Modulo Dati Testata -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
-        <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Titolo / Edizione</label>
-          <input type="text" id="pdfEdition" value="ERMES UMG - Anno XI N. 4" class="w-full px-3 py-2 border rounded text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Data di Uscita</label>
-          <input type="text" id="pdfDate" value="Martedì, 20 Ottobre 2026" class="w-full px-3 py-2 border rounded text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Motto / Slogan</label>
-          <input type="text" id="pdfSlogan" value="Il Giornale dell'Università Magna Græcia" class="w-full px-3 py-2 border rounded text-sm">
-        </div>
-      </div>
-
-      <!-- Modulo Aggiunta Articolo -->
-      <div class="border p-4 rounded-lg mb-6 bg-white shadow-sm space-y-4">
-        <h3 class="font-bold text-sm text-slate-700">Aggiungi Articolo al Giornalino</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs text-slate-500 mb-1">Posizione nell'Impaginato</label>
-            <select id="artPos" class="w-full px-3 py-2 border rounded text-sm">
-              <option value="main">Apertura (Prima Pagina - Notizia Principale)</option>
-              <option value="side">Spalla / Taglio Medio (Prima Pagina)</option>
-              <option value="inside">Pagine Interne (Layout a 3 colonne)</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs text-slate-500 mb-1">Categoria / Rubrica</label>
-            <input type="text" id="artCat" placeholder="Es: Attualità, Cultura, Diritto..." class="w-full px-3 py-2 border rounded text-sm">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs text-slate-500 mb-1">Titolo dell'Articolo</label>
-          <input type="text" id="artTitle" placeholder="Inserisci il titolo..." class="w-full px-3 py-2 border rounded text-sm font-semibold">
-        </div>
-
-        <div>
-          <label class="block text-xs text-slate-500 mb-1">Sottotitolo / Catenaccio</label>
-          <input type="text" id="artSubtitle" placeholder="Sommario o riassunto breve..." class="w-full px-3 py-2 border rounded text-sm">
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs text-slate-500 mb-1">Autore</label>
-            <input type="text" id="artAuthor" placeholder="Nome dell'autore" class="w-full px-3 py-2 border rounded text-sm">
-          </div>
-          <div>
-            <label class="block text-xs text-slate-500 mb-1">Foto / Immagine (Opzionale)</label>
-            <input type="file" id="artImage" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs text-slate-500 mb-1">Testo dell'Articolo</label>
-          <textarea id="artBody" rows="4" placeholder="Incolla o scrivi il testo dell'articolo..." class="w-full px-3 py-2 border rounded text-sm"></textarea>
-        </div>
-
-        <button onclick="addArticleToNewspaper()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded text-sm">
-          + Aggiungi Articolo all'Edizione
-        </button>
-      </div>
-
-      <!-- Pulsante Stampa e Foglietto Anteprima -->
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="font-bold text-slate-800">Anteprima di Stampa del Giornalino</h3>
-        <button onclick="downloadPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-lg shadow-md text-sm">
-          📄 Scarica PDF Stampabile
-        </button>
-      </div>
-
-      <!-- FOGLIO ANTEPREMA GIORNALE (FONT GEORGIA) -->
-      <div id="newspaperPaper" class="bg-white p-8 border border-slate-300 shadow-xl mx-auto text-black" style="font-family: Georgia, serif; max-width: 800px; min-height: 1100px;">
-        
-        <!-- TESTATA -->
-        <header class="border-b-4 border-black pb-2 mb-4">
-          <div class="flex justify-between items-center text-xs border-b border-black pb-1 mb-2 font-sans uppercase tracking-wider">
-            <span id="displayDate">MARTEDÌ, 20 OTTOBRE 2026</span>
-            <span id="displaySlogan">ERMES UMG • GIORNALE UNIVERSITARIO</span>
-            <span id="displayEdition">EDIZIONE N. 4</span>
-          </div>
-          <div class="text-center py-2">
-            <h1 class="text-5xl font-black tracking-tight uppercase" style="font-family: 'Times New Roman', Georgia, serif; font-size: 58px; letter-spacing: -1px;">
-              ERMES UMG
-            </h1>
-          </div>
-          <div class="border-t border-black pt-1 mt-1 text-center text-xs italic">
-            Giornale Indipendente dell'Università degli Studi Magna Græcia di Catanzaro
-          </div>
-        </header>
-
-        <!-- PRIMA PAGINA -->
-        <div id="frontPageLayout" class="grid grid-cols-3 gap-6 border-b-2 border-black pb-6 mb-6">
-          <div id="mainArticleSection" class="col-span-2 border-r border-slate-300 pr-6">
-            <div class="text-slate-400 italic text-sm">Aggiungi un articolo in posizione "Apertura" per inserire la notizia principale...</div>
-          </div>
-          <div id="sideArticlesSection" class="space-y-4">
-            <div class="text-slate-400 italic text-sm">Notizie di spalla e approfondimenti...</div>
-          </div>
-        </div>
-
-        <!-- PAGINE INTERNE -->
-        <div id="insideArticlesSection" class="space-y-6">
-          <h2 class="text-lg font-bold border-b border-black uppercase tracking-wider mb-2 font-sans">Pagine Interne</h2>
-          <div id="insideGrid" class="grid grid-cols-3 gap-4 text-justify text-xs leading-relaxed">
-            <!-- Articoli interni -->
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- CODICE JAVASCRIPT PER IL FUNZIONAMENTO -->
+  <!-- CODICE PER LA LOGICA -->
   <script>
-    let quill;
-    document.addEventListener("DOMContentLoaded", function () {
-      quill = new Quill('#editorContainer', {
-        theme: 'snow',
-        placeholder: 'Scrivi qui il tuo articolo...',
-        modules: {
-          toolbar: [
-            [{ 'header': [1, 2, 3, false] }],
-            ['bold', 'italic', 'underline', 'strike'],
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            ['link', 'image', 'blockquote', 'code-block'],
-            [{ 'color': [] }, { 'background': [] }],
-            ['clean']
-          ]
-        }
-      });
-    });
-
-    const USERS_DB = {
-      "autore1": "pass123",
-      "redazione.umg": "giornalino2026",
-      "student.editor": "umg2026"
-    };
-
-    function handleLogin(event) {
-      event.preventDefault();
-      const user = document.getElementById("usernameInput").value.trim();
-      const pass = document.getElementById("passwordInput").value.trim();
-
-      if (USERS_DB[user] && USERS_DB[user] === pass) {
-        localStorage.setItem("giornalino_user", user);
-        showDashboard(user);
-      } else {
-        document.getElementById("loginError").classList.remove("hidden");
-      }
-    }
-
-    function showDashboard(username) {
-      document.getElementById("loginSection").classList.add("hidden");
-      document.getElementById("dashboardContainer").classList.remove("hidden");
-      document.getElementById("loggedUser").innerText = username;
-    }
-
-    function handleLogout() {
-      localStorage.removeItem("giornalino_user");
-      location.reload();
-    }
-
-    const savedUser = localStorage.getItem("giornalino_user");
-    if (savedUser) {
-      showDashboard(savedUser);
-    }
-
-    // Cambiare tra scheda Editor e scheda PDF
-    function switchTab(tabName) {
-      if (tabName === 'editor') {
-        document.getElementById('editorSection').classList.remove('hidden');
-        document.getElementById('pdfSection').classList.add('hidden');
-        document.getElementById('tab-editor').className = "py-3 border-b-2 border-blue-600 text-blue-600";
-        document.getElementById('tab-pdf').className = "py-3 border-b-2 border-transparent hover:text-slate-800";
-      } else {
-        document.getElementById('editorSection').classList.add('hidden');
-        document.getElementById('pdfSection').classList.remove('hidden');
-        document.getElementById('tab-pdf').className = "py-3 border-b-2 border-blue-600 text-blue-600";
-        document.getElementById('tab-editor').className = "py-3 border-b-2 border-transparent hover:text-slate-800";
-      }
-    }
-
-    // Salvare la bozza
-    async function saveDraft() {
-      const title = document.getElementById("postTitle").value.trim();
-      const content = quill.root.innerHTML;
-      const statusMsg = document.getElementById("statusMessage");
-      const saveBtn = document.getElementById("saveBtn");
-
-      if (!title || quill.getText().trim().length === 0) {
-        statusMsg.className = "text-sm font-medium text-amber-600";
-        statusMsg.innerText = "Inserisci sia il titolo che il testo prima di inviare.";
-        return;
-      }
-
-      statusMsg.className = "text-sm font-medium text-blue-600";
-      statusMsg.innerText = "Invio della bozza in corso...";
-      saveBtn.disabled = true;
-
-      setTimeout(() => {
-        statusMsg.className = "text-sm font-medium text-emerald-600";
-        statusMsg.innerText = "✓ Bozza salvata con successo!";
-        saveBtn.disabled = false;
-        document.getElementById("postTitle").value = "";
-        quill.setContents([]);
-      }, 1500);
-    }
-
-    // Aggiungere un articolo al foglio del giornalino PDF
+    // Aggiungi articolo al foglio
     function addArticleToNewspaper() {
       const pos = document.getElementById('artPos').value;
       const category = document.getElementById('artCat').value || 'ATTUALITÀ';
@@ -336,13 +164,14 @@
         renderArticleHTML(pos, category, title, subtitle, author, body, null);
       }
 
+      // Svuota i campi
       document.getElementById('artTitle').value = '';
       document.getElementById('artSubtitle').value = '';
       document.getElementById('artBody').value = '';
       document.getElementById('artImage').value = '';
     }
 
-    // Mostrare l'articolo dentro il foglio in stile Corriere
+    // Disegna l'articolo nel layout
     function renderArticleHTML(pos, category, title, subtitle, author, body, imageSrc) {
       let imgHtml = imageSrc ? `<img src="${imageSrc}" class="w-full h-auto my-2 border border-slate-200">` : '';
 
@@ -351,10 +180,8 @@
         mainSec.innerHTML = `
           <div class="mb-2">
             <span class="bg-black text-white px-1.5 py-0.5 text-[10px] font-sans font-bold uppercase">${category}</span>
-            <h2 class="text-3xl font-bold leading-tight mt-1" style="font-family: Georgia, serif;">${title}</h2>
-            ${subtitle ? `<h3 class="text-sm italic text-slate-700 mt-1 mb-2 font-sans">${subtitle}</h3>` : ''}
-            <div class="text-[11px] font-sans text-slate-500 mb-2">di <span class="font-bold uppercase text-black">${author}</span></div>
-            ${imgHtml}
+            <h2 class="text-3xl font-bold leading-tight mt-1" style="font-family: Georgia, serif;">${title}</h2>${subtitle ? `<h3 class="text-sm italic text-slate-700 mt-1 mb-2 font-sans">${subtitle}</h3>` : ''}
+            <div class="text-[11px] font-sans text-slate-500 mb-2">di <span class="font-bold uppercase text-black">${author}</span></div>${imgHtml}
             <div class="text-xs leading-normal space-y-2 mt-2 text-justify" style="column-count: 2; column-gap: 15px;">
               ${body.replace(/\n/g, '<br>')}
             </div>
@@ -367,46 +194,4 @@
         const articleElem = document.createElement('div');
         articleElem.className = "border-b border-slate-200 pb-3 mb-3";
         articleElem.innerHTML = `
-          <span class="text-[9px] font-sans font-bold uppercase tracking-wider text-red-700">${category}</span>
-          <h3 class="text-base font-bold leading-snug" style="font-family: Georgia, serif;">${title}</h3>
-          <div class="text-[10px] font-sans text-slate-500 my-1">di <b>${author}</b></div>
-          ${imgHtml}
-          <p class="text-[11px] leading-tight text-justify">${body.substring(0, 250)}...</p>
-        `;
-        sideSec.appendChild(articleElem);
-      } else {
-        const insideGrid = document.getElementById('insideGrid');
-        const articleElem = document.createElement('div');
-        articleElem.className = "border-b border-slate-200 pb-3 mb-3";
-        articleElem.innerHTML = `
-          <span class="text-[9px] font-sans font-bold uppercase text-blue-800">${category}</span>
-          <h3 class="text-sm font-bold leading-snug" style="font-family: Georgia, serif;">${title}</h3>
-          <div class="text-[10px] font-sans text-slate-500 my-1">di <b>${author}</b></div>
-          ${imgHtml}
-          <p class="text-[11px] leading-relaxed text-justify">${body}</p>
-        `;
-        insideGrid.appendChild(articleElem);
-      }
-    }
-
-    // Scaricare il file PDF
-    function downloadPDF() {
-      const element = document.getElementById('newspaperPaper');
-      
-      document.getElementById('displayDate').innerText = document.getElementById('pdfDate').value.toUpperCase();
-      document.getElementById('displaySlogan').innerText = document.getElementById('pdfSlogan').value.toUpperCase();
-      document.getElementById('displayEdition').innerText = document.getElementById('pdfEdition').value.toUpperCase();
-
-      const opt = {
-        margin:       0.3,
-        filename:     'Ermes_UMG_Giornalino.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
-
-      html2pdf().set(opt).from(element).save();
-    }
-  </script>
-</body>
-</html>
+          <span class="text-[9px] font-sans font-bold
