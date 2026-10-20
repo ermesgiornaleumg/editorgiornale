@@ -5,11 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ermes UMG - Creatore Giornalino PDF</title>
   
-  <!-- Stili Tailwind CSS -->
+  <!-- Tailwind CSS per la grafica dell'interfaccia -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Librerie per esportazione PDF e impaginazione -->
-  <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
+  <!-- Libreria per la conversione in PDF ad alta fedeltà -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    /* Regole Stampa Stile Quotidiano */
+    @font-face {
+      font-family: 'Georgia';
+    }
+    .newspaper-font {
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+    .headline-blue {
+      color: #0d2b45;
+    }
+    .border-blue-main {
+      border-color: #0d2b45;
+    }
+    .bg-blue-main {
+      background-color: #0d2b45;
+    }
+  </style>
 </head>
 <body class="bg-slate-100 font-sans min-h-screen text-slate-800 p-4 md:p-8">
 
@@ -17,128 +35,186 @@
     <div class="flex items-center justify-between border-b pb-4 mb-6">
       <div>
         <h1 class="text-2xl font-bold text-slate-900">📰 Ermes UMG - Piattaforma Giornalino PDF</h1>
-        <p class="text-xs text-slate-500 mt-1">Carica gli articoli e genera automaticamente l'edizione in PDF</p>
+        <p class="text-xs text-slate-500 mt-1">Impaginazione automatica in formato Quotidiano (Stile Corriere della Sera)</p>
       </div>
-      <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">Stile Corriere</span>
+      <span class="bg-blue-900 text-white text-xs font-semibold px-3 py-1 rounded-full">Formato Tabloide HD</span>
     </div>
 
-    <!-- DATI TESTATA -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
+    <!-- DATI TESTATA E LOGO -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
+      <div>
+        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Logo Rettangolare</label>
+        <input type="file" id="logoImageInput" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-100 file:text-blue-800">
+      </div>
       <div>
         <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Titolo / Edizione</label>
-        <input type="text" id="pdfEdition" value="ERMES UMG - Anno XI N. 4" class="w-full px-3 py-2 border rounded text-sm">
+        <input type="text" id="pdfEdition" value="ANNO I - N. 2" class="w-full px-3 py-2 border rounded text-sm">
       </div>
       <div>
         <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Data di Uscita</label>
         <input type="text" id="pdfDate" value="Martedì, 20 Ottobre 2026" class="w-full px-3 py-2 border rounded text-sm">
       </div>
       <div>
-        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Motto / Slogan</label>
-        <input type="text" id="pdfSlogan" value="Il Giornale dell'Università Magna Græcia" class="w-full px-3 py-2 border rounded text-sm">
+        <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Prezzo / Info</label>
+        <input type="text" id="pdfPrice" value="DISTRIBUZIONE GRATUITA" class="w-full px-3 py-2 border rounded text-sm">
       </div>
     </div>
 
-    <!-- CARICAMENTO ARTICOLO -->
+    <!-- SPONSOR & PUBBLICITÀ -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 bg-amber-50 p-4 rounded-lg border border-amber-200">
+      <div>
+        <label class="block text-xs font-semibold uppercase text-amber-800 mb-1">Main Sponsor Prima Pagina (Nome/Banner)</label>
+        <input type="text" id="sponsorMain" value="SPONSOR UFFICIALE UMG - Partner della Redazione" class="w-full px-3 py-2 border rounded text-sm">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold uppercase text-amber-800 mb-1">Banner Sponsor Pagine Interne</label>
+        <input type="text" id="sponsorFooter" value="Spazio Riservato agli Sponsor ed Attività Convenzionate UMG" class="w-full px-3 py-2 border rounded text-sm">
+      </div>
+    </div>
+
+    <!-- CARICAMENTO ARTICOLI -->
     <div class="border p-4 rounded-lg mb-6 bg-white shadow-sm space-y-4">
-      <h3 class="font-bold text-sm text-slate-700">Aggiungi Articolo all'Impaginato</h3>
+      <h3 class="font-bold text-sm text-slate-700">Aggiungi Articolo all'Edizione</h3>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs text-slate-500 mb-1">Posizione nel Giornale</label>
+          <label class="block text-xs text-slate-500 mb-1">Posizione nell'Impaginato</label>
           <select id="artPos" class="w-full px-3 py-2 border rounded text-sm">
-            <option value="main">Apertura (Prima Pagina - Notizia Principale)</option>
-            <option value="side">Spalla / Taglio Medio (Prima Pagina)</option>
+            <option value="main">Apertura (Prima Pagina - Notizia Principale in Grande)</option>
+            <option value="side">Spalla / Taglio Medio (Prima Pagina Lateralmente)</option>
             <option value="inside">Pagine Interne (Layout a 3 colonne)</option>
           </select>
         </div>
         <div>
-          <label class="block text-xs text-slate-500 mb-1">Categoria / Rubrica</label>
-          <input type="text" id="artCat" placeholder="Es: Attualità, Diritto, Cultura..." class="w-full px-3 py-2 border rounded text-sm">
+          <label class="block text-xs text-slate-500 mb-1">Categoria / Sezione</label>
+          <input type="text" id="artCat" placeholder="Es: EDITORIALE, ATTUALITÀ, DIRITTO..." class="w-full px-3 py-2 border rounded text-sm">
         </div>
       </div>
 
       <div>
         <label class="block text-xs text-slate-500 mb-1">Titolo dell'Articolo</label>
-        <input type="text" id="artTitle" placeholder="Inserisci il titolo..." class="w-full px-3 py-2 border rounded text-sm font-semibold">
+        <input type="text" id="artTitle" placeholder="Inserisci il titolo d'impatto..." class="w-full px-3 py-2 border rounded text-sm font-semibold">
       </div>
 
       <div>
         <label class="block text-xs text-slate-500 mb-1">Sottotitolo / Catenaccio</label>
-        <input type="text" id="artSubtitle" placeholder="Sommario breve..." class="w-full px-3 py-2 border rounded text-sm">
+        <input type="text" id="artSubtitle" placeholder="Sommario o riassunto di apertura..." class="w-full px-3 py-2 border rounded text-sm">
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-xs text-slate-500 mb-1">Autore</label>
-          <input type="text" id="artAuthor" placeholder="Nome dell'autore" class="w-full px-3 py-2 border rounded text-sm">
+          <input type="text" id="artAuthor" placeholder="Es: BRUNO RACHIELE" class="w-full px-3 py-2 border rounded text-sm">
         </div>
         <div>
-          <label class="block text-xs text-slate-500 mb-1">Foto / Immagine (Opzionale)</label>
-          <input type="file" id="artImage" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700">
+          <label class="block text-xs text-slate-500 mb-1">Foto / Immagine Articolo (Opzionale)</label>
+          <input type="file" id="artImage" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700">
         </div>
       </div>
 
       <div>
         <label class="block text-xs text-slate-500 mb-1">Testo dell'Articolo</label>
-        <textarea id="artBody" rows="4" placeholder="Incolla o scrivi il testo dell'articolo..." class="w-full px-3 py-2 border rounded text-sm"></textarea>
+        <textarea id="artBody" rows="5" placeholder="Incolla qui il testo dell'articolo..." class="w-full px-3 py-2 border rounded text-sm"></textarea>
       </div>
 
-      <button onclick="addArticleToNewspaper()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded text-sm">
+      <button onclick="addArticleToNewspaper()" class="bg-blue-900 hover:bg-blue-800 text-white font-semibold px-5 py-2.5 rounded-lg text-sm transition shadow">
         + Aggiungi Articolo all'Edizione
       </button>
     </div>
 
-    <!-- ANTEPRIMA E DOWNLOAD -->
+    <!-- BOTTONE GENERAZIONE E DOWNLOAD -->
     <div class="flex justify-between items-center mb-4 border-t pt-4">
-      <h3 class="font-bold text-slate-800">Anteprima Foglio Stampabile</h3>
-      <button onclick="downloadPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-lg shadow-md text-sm">
-        📄 Scarica PDF Stampabile
+      <h3 class="font-bold text-slate-800">Anteprima della Prima Pagina</h3>
+      <button onclick="downloadPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-lg shadow-md text-sm transition">
+        📄 Scarica PDF Formato Quotidiano
       </button>
     </div>
 
-    <!-- ANTEPRIMA VISIVA GIORNALE (FONT GEORGIA) -->
-    <div id="newspaperPaper" class="bg-white p-8 border border-slate-300 shadow-xl mx-auto text-black" style="font-family: Georgia, serif; max-width: 800px; min-height: 1100px;">
+    <!-- FOGLIO ANTEPREMA GIORNALE (FORMATO TABLOIDE A3 - FONT GEORGIA) -->
+    <div id="newspaperPaper" class="newspaper-font bg-white p-10 border border-slate-400 shadow-2xl mx-auto text-black" style="width: 1000px; min-height: 1400px;">
       
-      <!-- TESTATA STILE CORRIERE -->
-      <header class="border-b-4 border-black pb-2 mb-4">
-        <div class="flex justify-between items-center text-xs border-b border-black pb-1 mb-2 font-sans uppercase tracking-wider">
-          <span id="displayDate">MARTEDÌ, 20 OTTOBRE 2026</span>
-          <span id="displaySlogan">ERMES UMG • GIORNALE UNIVERSITARIO</span>
-          <span id="displayEdition">EDIZIONE N. 4</span>
+      <!-- FASCIA SUPERIORE TESTATA E MAIN SPONSOR -->
+      <div class="flex justify-between items-center border-b-2 border-black pb-2 mb-2">
+        <div class="text-xs uppercase font-sans tracking-wider">
+          <span id="displayDate" class="font-bold">MARTEDÌ, 20 OTTOBRE 2026</span> • <span id="displayEdition">ANNO I - N. 2</span>
         </div>
-        <div class="text-center py-2">
-          <h1 class="text-5xl font-black tracking-tight uppercase" style="font-family: 'Times New Roman', Georgia, serif; font-size: 58px; letter-spacing: -1px;">
-            ERMES UMG
-          </h1>
+        <!-- SPONSOR PRIMA PAGINA IN ALTO -->
+        <div class="bg-slate-100 border border-slate-300 px-3 py-1 text-[11px] font-sans text-center rounded">
+          <span class="text-[9px] text-slate-500 uppercase block font-bold">Spazio Pubblicitario</span>
+          <span id="displaySponsorMain" class="font-semibold text-blue-900">SPONSOR UFFICIALE UMG</span>
         </div>
-        <div class="border-t border-black pt-1 mt-1 text-center text-xs italic">
-          Giornale Indipendente dell'Università degli Studi Magna Græcia di Catanzaro
+      </div>
+
+      <!-- TESTATA PRINCIPALE CON LOGO RETTANGOLARE -->
+      <header class="border-b-4 border-black pb-3 mb-4 text-center">
+        <div class="flex justify-center items-center my-2">
+          <!-- Immagine Logo Rettangolare -->
+          <img id="newspaperLogo" src="https://www.ermes-umg.it/favicon.ico" alt="Logo Ermes UMG" class="h-24 object-contain max-w-full">
+        </div>
+        <div class="border-t border-black pt-1 mt-2 flex justify-between items-center text-xs font-sans italic">
+          <span>Giornale Indipendente dell'Università degli Studi Magna Græcia di Catanzaro</span>
+          <span id="displayPrice" class="font-bold not-italic">DISTRIBUZIONE GRATUITA</span>
         </div>
       </header>
 
-      <!-- PRIMA PAGINA -->
+      <!-- PRIMA PAGINA (LAYOUT AD IMPATTO A 3 COLONNE) -->
       <div id="frontPageLayout" class="grid grid-cols-3 gap-6 border-b-2 border-black pb-6 mb-6">
+        
+        <!-- APERTURA NOTIZIA PRINCIPALE (2 Terzi di pagina) -->
         <div id="mainArticleSection" class="col-span-2 border-r border-slate-300 pr-6">
-          <div class="text-slate-400 italic text-sm">Aggiungi un articolo scegliendo "Apertura" per visualizzare qui la notizia principale...</div>
+          <div class="text-slate-400 italic text-sm py-8 text-center">
+            Aggiungi un articolo selezionando la posizione "Apertura" per mostrare la notizia principale con titolo d'impatto e foto qui...
+          </div>
         </div>
+
+        <!-- SPALLA E APPROFONDIMENTI (1 Terzo di pagina) -->
         <div id="sideArticlesSection" class="space-y-4">
-          <div class="text-slate-400 italic text-sm">Notizie di spalla e approfondimenti...</div>
+          <div class="bg-blue-50 p-3 border-l-4 border-blue-900 text-xs font-sans font-bold text-blue-900 uppercase mb-2">
+            In Questo Numero
+          </div>
+          <div id="sideContentList" class="space-y-4">
+            <div class="text-slate-400 italic text-sm">Notizie di spalla e approfondimenti...</div>
+          </div>
         </div>
       </div>
 
-      <!-- PAGINE INTERNE -->
-      <div id="insideArticlesSection" class="space-y-6">
-        <h2 class="text-lg font-bold border-b border-black uppercase tracking-wider mb-2 font-sans">Pagine Interne</h2>
-        <div id="insideGrid" class="grid grid-cols-3 gap-4 text-justify text-xs leading-relaxed">
-          <!-- Articoli interni -->
+      <!-- SEZIONE PAGINE INTERNE / RUBRICHE -->
+      <div id="insideArticlesSection" class="space-y-4">
+        <div class="flex justify-between items-center border-b-2 border-blue-900 pb-1 mb-4">
+          <h2 class="text-lg font-bold uppercase tracking-wider font-sans headline-blue">Pagine Interne & Culture</h2>
+          <span class="text-xs font-sans text-slate-500">Ermes UMG</span>
+        </div>
+        
+        <div id="insideGrid" class="grid grid-cols-3 gap-6 text-justify text-xs leading-relaxed">
+          <!-- Gli articoli interni verranno disposti qui a 3 colonne -->
         </div>
       </div>
+
+      <!-- BANNER SPONSOR IN PIÈ DI PAGINA -->
+      <footer class="mt-12 border-t-2 border-black pt-3">
+        <div class="bg-slate-100 border border-slate-300 p-2 text-center text-xs font-sans">
+          <span class="text-[9px] text-slate-500 uppercase block font-bold">Partner & Sponsor Convenzionati UMG</span>
+          <span id="displaySponsorFooter" class="font-bold text-slate-800">Spazio Riservato agli Sponsor ed Attività Convenzionate UMG</span>
+        </div>
+      </footer>
 
     </div>
   </div>
 
-  <!-- SCRIPT DI FUNZIONAMENTO -->
+  <!-- SCRIPT JAVASCRIPT PER LA GESTIONE DEL LAYOUT E DEL LOGO -->
   <script>
+    // Caricamento Logo Rettangolare
+    document.getElementById('logoImageInput').addEventListener('change', function(e) {
+      if (e.target.files && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          document.getElementById('newspaperLogo').src = event.target.result;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+
+    // Aggiungi Articolo
     function addArticleToNewspaper() {
       const pos = document.getElementById('artPos').value;
       const category = document.getElementById('artCat').value || 'ATTUALITÀ';
@@ -163,71 +239,78 @@
         renderArticleHTML(pos, category, title, subtitle, author, body, null);
       }
 
+      // Reset Campi Modulo
       document.getElementById('artTitle').value = '';
       document.getElementById('artSubtitle').value = '';
       document.getElementById('artBody').value = '';
       document.getElementById('artImage').value = '';
     }
 
+    // Renderizza Articolo nel Foglio
     function renderArticleHTML(pos, category, title, subtitle, author, body, imageSrc) {
-      let imgHtml = imageSrc ? `<img src="${imageSrc}" class="w-full h-auto my-2 border border-slate-200">` : '';
+      let imgHtml = imageSrc ? `<img src="${imageSrc}" class="w-full h-auto my-3 border border-slate-300 shadow-sm">` : '';
 
       if (pos === 'main') {
         const mainSec = document.getElementById('mainArticleSection');
         mainSec.innerHTML = `
-          <div class="mb-2">
-            <span class="bg-black text-white px-1.5 py-0.5 text-[10px] font-sans font-bold uppercase">${category}</span>
-            <h2 class="text-3xl font-bold leading-tight mt-1" style="font-family: Georgia, serif;">${title}</h2>
-            ${subtitle ? `<h3 class="text-sm italic text-slate-700 mt-1 mb-2 font-sans">${subtitle}</h3>` : ''}
-            <div class="text-[11px] font-sans text-slate-500 mb-2">di <span class="font-bold uppercase text-black">${author}</span></div>
+          <div class="mb-4">
+            <span class="bg-blue-900 text-white px-2 py-0.5 text-[11px] font-sans font-bold uppercase tracking-wider">${category}</span>
+            <h2 class="text-4xl font-bold leading-tight mt-2 mb-2 headline-blue">${title}</h2>
+            ${subtitle ? `<h3 class="text-base italic text-slate-700 mb-3 font-sans leading-snug border-l-2 border-blue-900 pl-3">${subtitle}</h3>` : ''}
+            <div class="text-xs font-sans text-slate-600 mb-3 uppercase tracking-wider">di <span class="font-bold text-black">${author}</span></div>
             ${imgHtml}
-            <div class="text-xs leading-normal space-y-2 mt-2 text-justify" style="column-count: 2; column-gap: 15px;">
-              ${body.replace(/\n/g, '<br>')}
+            <div class="text-xs leading-relaxed space-y-3 mt-3 text-justify font-serif" style="column-count: 2; column-gap: 20px;">
+              ${body.replace(/\n/g, '<br><br>')}
             </div>
           </div>
         `;
       } else if (pos === 'side') {
-        const sideSec = document.getElementById('sideArticlesSection');
-        if (sideSec.innerHTML.includes('Notizie di spalla')) sideSec.innerHTML = '';
+        const sideList = document.getElementById('sideContentList');
+        if (sideList.innerHTML.includes('Notizie di spalla')) sideList.innerHTML = '';
         
         const articleElem = document.createElement('div');
-        articleElem.className = "border-b border-slate-200 pb-3 mb-3";
+        articleElem.className = "border-b border-slate-300 pb-3 mb-3";
         articleElem.innerHTML = `
-          <span class="text-[9px] font-sans font-bold uppercase tracking-wider text-red-700">${category}</span>
-          <h3 class="text-base font-bold leading-snug" style="font-family: Georgia, serif;">${title}</h3>
-          <div class="text-[10px] font-sans text-slate-500 my-1">di <b>${author}</b></div>
+          <span class="text-[10px] font-sans font-bold uppercase text-red-700 tracking-wider">${category}</span>
+          <h3 class="text-lg font-bold leading-snug mt-1" style="font-family: Georgia, serif;">${title}</h3>
+          <div class="text-[11px] font-sans text-slate-500 my-1">di <b>${author}</b></div>
           ${imgHtml}
-          <p class="text-[11px] leading-tight text-justify">${body.substring(0, 250)}...</p>
+          <p class="text-xs leading-snug text-justify text-slate-800">${body.substring(0, 300)}...</p>
         `;
-        sideSec.appendChild(articleElem);
+        sideList.appendChild(articleElem);
       } else {
         const insideGrid = document.getElementById('insideGrid');
         const articleElem = document.createElement('div');
-        articleElem.className = "border-b border-slate-200 pb-3 mb-3";
+        articleElem.className = "border-b border-slate-200 pb-4 mb-2";
         articleElem.innerHTML = `
-          <span class="text-[9px] font-sans font-bold uppercase text-blue-800">${category}</span>
-          <h3 class="text-sm font-bold leading-snug" style="font-family: Georgia, serif;">${title}</h3>
+          <span class="text-[10px] font-sans font-bold uppercase text-blue-900 tracking-wider">${category}</span>
+          <h3 class="text-base font-bold leading-snug mt-1" style="font-family: Georgia, serif;">${title}</h3>
           <div class="text-[10px] font-sans text-slate-500 my-1">di <b>${author}</b></div>
           ${imgHtml}
-          <p class="text-[11px] leading-relaxed text-justify">${body}</p>
+          <p class="text-xs leading-relaxed text-justify text-slate-800">${body}</p>
         `;
         insideGrid.appendChild(articleElem);
       }
     }
 
+    // Scarica PDF in formato Tabloide / Quotidiano ad alta fedeltà
     function downloadPDF() {
       const element = document.getElementById('newspaperPaper');
       
+      // Aggiorna Dati Testata e Sponsor
       document.getElementById('displayDate').innerText = document.getElementById('pdfDate').value.toUpperCase();
-      document.getElementById('displaySlogan').innerText = document.getElementById('pdfSlogan').value.toUpperCase();
       document.getElementById('displayEdition').innerText = document.getElementById('pdfEdition').value.toUpperCase();
+      document.getElementById('displayPrice').innerText = document.getElementById('pdfPrice').value.toUpperCase();
+      document.getElementById('displaySponsorMain').innerText = document.getElementById('pdfSponsorMain').value;
+      document.getElementById('displaySponsorFooter').innerText = document.getElementById('pdfSponsorFooter').value;
 
+      // Configurazione Formato A3 (Tabloide) per evitare sfasamenti delle colonne
       const opt = {
-        margin:       0.3,
-        filename:     'Ermes_UMG_Giornalino.pdf',
+        margin:       [0.2, 0.2, 0.2, 0.2],
+        filename:     'Ermes_UMG_Giornalino_Edizione.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+        html2canvas:  { scale: 2, useCORS: true, logging: false },
+        jsPDF:        { unit: 'in', format: 'a3', orientation: 'portrait' }
       };
 
       html2pdf().set(opt).from(element).save();
