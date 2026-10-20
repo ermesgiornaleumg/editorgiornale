@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ermes UMG - Creatore Giornalino PDF</title>
   
-  <!-- Stili e Grafica -->
+  <!-- Stili Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Librerie per convertire l'impaginato in PDF -->
+  <!-- Librerie per esportazione PDF e impaginazione -->
   <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
@@ -17,12 +17,12 @@
     <div class="flex items-center justify-between border-b pb-4 mb-6">
       <div>
         <h1 class="text-2xl font-bold text-slate-900">📰 Ermes UMG - Piattaforma Giornalino PDF</h1>
-        <p class="text-xs text-slate-500 mt-1">Carica gli articoli e impagina automaticamente l'edizione in formato PDF</p>
+        <p class="text-xs text-slate-500 mt-1">Carica gli articoli e genera automaticamente l'edizione in PDF</p>
       </div>
       <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">Stile Corriere</span>
     </div>
 
-    <!-- MODULO DATI DELLA TESTATA -->
+    <!-- DATI TESTATA -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
       <div>
         <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Titolo / Edizione</label>
@@ -38,7 +38,7 @@
       </div>
     </div>
 
-    <!-- MODULO INSERIMENTO ARTICOLO -->
+    <!-- CARICAMENTO ARTICOLO -->
     <div class="border p-4 rounded-lg mb-6 bg-white shadow-sm space-y-4">
       <h3 class="font-bold text-sm text-slate-700">Aggiungi Articolo all'Impaginato</h3>
       
@@ -52,7 +52,7 @@
           </select>
         </div>
         <div>
-          <label class="block text-xs text-slate-500 mb-1">Categoria / Sezione</label>
+          <label class="block text-xs text-slate-500 mb-1">Categoria / Rubrica</label>
           <input type="text" id="artCat" placeholder="Es: Attualità, Diritto, Cultura..." class="w-full px-3 py-2 border rounded text-sm">
         </div>
       </div>
@@ -80,7 +80,7 @@
 
       <div>
         <label class="block text-xs text-slate-500 mb-1">Testo dell'Articolo</label>
-        <textarea id="artBody" rows="4" placeholder="Incolla o scrivi il testo qui..." class="w-full px-3 py-2 border rounded text-sm"></textarea>
+        <textarea id="artBody" rows="4" placeholder="Incolla o scrivi il testo dell'articolo..." class="w-full px-3 py-2 border rounded text-sm"></textarea>
       </div>
 
       <button onclick="addArticleToNewspaper()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded text-sm">
@@ -88,7 +88,7 @@
       </button>
     </div>
 
-    <!-- BARRA D'AZIONE PER STAMPA -->
+    <!-- ANTEPRIMA E DOWNLOAD -->
     <div class="flex justify-between items-center mb-4 border-t pt-4">
       <h3 class="font-bold text-slate-800">Anteprima Foglio Stampabile</h3>
       <button onclick="downloadPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-lg shadow-md text-sm">
@@ -96,10 +96,10 @@
       </button>
     </div>
 
-    <!-- ANTEPRIMA VISIVA GIORNALE (STYLE CORRIERE - GEORGIA) -->
+    <!-- ANTEPRIMA VISIVA GIORNALE (FONT GEORGIA) -->
     <div id="newspaperPaper" class="bg-white p-8 border border-slate-300 shadow-xl mx-auto text-black" style="font-family: Georgia, serif; max-width: 800px; min-height: 1100px;">
       
-      <!-- TESTATA -->
+      <!-- TESTATA STILE CORRIERE -->
       <header class="border-b-4 border-black pb-2 mb-4">
         <div class="flex justify-between items-center text-xs border-b border-black pb-1 mb-2 font-sans uppercase tracking-wider">
           <span id="displayDate">MARTEDÌ, 20 OTTOBRE 2026</span>
@@ -130,16 +130,15 @@
       <div id="insideArticlesSection" class="space-y-6">
         <h2 class="text-lg font-bold border-b border-black uppercase tracking-wider mb-2 font-sans">Pagine Interne</h2>
         <div id="insideGrid" class="grid grid-cols-3 gap-4 text-justify text-xs leading-relaxed">
-          <!-- Articoli interni a 3 colonne -->
+          <!-- Articoli interni -->
         </div>
       </div>
 
     </div>
   </div>
 
-  <!-- CODICE PER LA LOGICA -->
+  <!-- SCRIPT DI FUNZIONAMENTO -->
   <script>
-    // Aggiungi articolo al foglio
     function addArticleToNewspaper() {
       const pos = document.getElementById('artPos').value;
       const category = document.getElementById('artCat').value || 'ATTUALITÀ';
@@ -164,14 +163,12 @@
         renderArticleHTML(pos, category, title, subtitle, author, body, null);
       }
 
-      // Svuota i campi
       document.getElementById('artTitle').value = '';
       document.getElementById('artSubtitle').value = '';
       document.getElementById('artBody').value = '';
       document.getElementById('artImage').value = '';
     }
 
-    // Disegna l'articolo nel layout
     function renderArticleHTML(pos, category, title, subtitle, author, body, imageSrc) {
       let imgHtml = imageSrc ? `<img src="${imageSrc}" class="w-full h-auto my-2 border border-slate-200">` : '';
 
@@ -180,8 +177,10 @@
         mainSec.innerHTML = `
           <div class="mb-2">
             <span class="bg-black text-white px-1.5 py-0.5 text-[10px] font-sans font-bold uppercase">${category}</span>
-            <h2 class="text-3xl font-bold leading-tight mt-1" style="font-family: Georgia, serif;">${title}</h2>${subtitle ? `<h3 class="text-sm italic text-slate-700 mt-1 mb-2 font-sans">${subtitle}</h3>` : ''}
-            <div class="text-[11px] font-sans text-slate-500 mb-2">di <span class="font-bold uppercase text-black">${author}</span></div>${imgHtml}
+            <h2 class="text-3xl font-bold leading-tight mt-1" style="font-family: Georgia, serif;">${title}</h2>
+            ${subtitle ? `<h3 class="text-sm italic text-slate-700 mt-1 mb-2 font-sans">${subtitle}</h3>` : ''}
+            <div class="text-[11px] font-sans text-slate-500 mb-2">di <span class="font-bold uppercase text-black">${author}</span></div>
+            ${imgHtml}
             <div class="text-xs leading-normal space-y-2 mt-2 text-justify" style="column-count: 2; column-gap: 15px;">
               ${body.replace(/\n/g, '<br>')}
             </div>
@@ -194,4 +193,45 @@
         const articleElem = document.createElement('div');
         articleElem.className = "border-b border-slate-200 pb-3 mb-3";
         articleElem.innerHTML = `
-          <span class="text-[9px] font-sans font-bold
+          <span class="text-[9px] font-sans font-bold uppercase tracking-wider text-red-700">${category}</span>
+          <h3 class="text-base font-bold leading-snug" style="font-family: Georgia, serif;">${title}</h3>
+          <div class="text-[10px] font-sans text-slate-500 my-1">di <b>${author}</b></div>
+          ${imgHtml}
+          <p class="text-[11px] leading-tight text-justify">${body.substring(0, 250)}...</p>
+        `;
+        sideSec.appendChild(articleElem);
+      } else {
+        const insideGrid = document.getElementById('insideGrid');
+        const articleElem = document.createElement('div');
+        articleElem.className = "border-b border-slate-200 pb-3 mb-3";
+        articleElem.innerHTML = `
+          <span class="text-[9px] font-sans font-bold uppercase text-blue-800">${category}</span>
+          <h3 class="text-sm font-bold leading-snug" style="font-family: Georgia, serif;">${title}</h3>
+          <div class="text-[10px] font-sans text-slate-500 my-1">di <b>${author}</b></div>
+          ${imgHtml}
+          <p class="text-[11px] leading-relaxed text-justify">${body}</p>
+        `;
+        insideGrid.appendChild(articleElem);
+      }
+    }
+
+    function downloadPDF() {
+      const element = document.getElementById('newspaperPaper');
+      
+      document.getElementById('displayDate').innerText = document.getElementById('pdfDate').value.toUpperCase();
+      document.getElementById('displaySlogan').innerText = document.getElementById('pdfSlogan').value.toUpperCase();
+      document.getElementById('displayEdition').innerText = document.getElementById('pdfEdition').value.toUpperCase();
+
+      const opt = {
+        margin:       0.3,
+        filename:     'Ermes_UMG_Giornalino.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(element).save();
+    }
+  </script>
+</body>
+</html>
